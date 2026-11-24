@@ -47,7 +47,7 @@ and the Magisk `module.prop` / `service.sh` payloads.
 - Behaviour parity control against the untranslated v3.1: same confirmation dialog, same 15 s
   countdown, same rollback, no exceptions in either build.
 
-Full evidence: [VERIFICATION.md](../blob/main/VERIFICATION.md).
+Full evidence: [VERIFICATION.md](https://github.com/b0r1s-69/LenovoMotorolovichY70-EN/blob/main/VERIFICATION.md).
 
 ### Upstream changes in 3.1
 

@@ -5,7 +5,7 @@ a display / power / debloat toolkit for the **Lenovo Legion Y70** and **Moto Edg
 The original app is Russian-only; this build ships the same code with every user-visible
 string translated to English.
 
-**Download:** see the [Releases](../../releases) page.
+**Download:** see the [Releases](https://github.com/b0r1s-69/LenovoMotorolovichY70-EN/releases) page.
 
 | | |
 |---|---|
