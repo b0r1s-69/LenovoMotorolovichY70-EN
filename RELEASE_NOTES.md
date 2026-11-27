@@ -1,17 +1,16 @@
-## Full English build of LenovoMotorolovichY70 3.2 (unofficial) — with an added charge limit
+## Full English build of LenovoMotorolovichY70 3.2 (unofficial)
 
-The app ships Russian-only. This build keeps the original code and replaces every user-visible
-string with English, then adds one feature the original does not have: a **battery charge limit** in
-the Power and Bypass Charging screen.
+The app ships Russian-only. This build is a **translation only**: every user-visible string is
+English, nothing else was touched.
 
 **Asset:** `LenovoMotorolovichY70_v3.2_EN.apk`
 
 ```
-size      830,493 bytes
-sha256    8bf07b581d2843056b1c0a0f4d99256ef25041041b3644b589930cf438f9e283
+size      822,219 bytes
+sha256    57d95678544f8f8375488ef603e9175106a2c2dd27ee6bd807ad168b12576909
 package   com.moto.resolutionmaster
 version   3.2 (versionCode 32)
-dex       classes.dex + classes2.dex (the feature)
+dex       classes.dex only — same class set as upstream
 cert      SHA-256 49f8ec5349ea1098be287ba9470c90bca702af7987b8017a474da1a8e35c5844
 ```
 
@@ -23,52 +22,35 @@ adb shell pm grant com.moto.resolutionmaster android.permission.WRITE_SECURE_SET
 ```
 
 - From the official Russian build: `adb uninstall com.moto.resolutionmaster` first (different key).
-- From the earlier English build: normal update, no uninstall.
-- Resolution / refresh-rate switching on Android 14+ still needs Shizuku or root, as upstream.
-
-### Battery charge limit (added, not upstream)
-
-New card in **Power and Bypass Charging**: Off / 80% / 85% / 90% / 95%, a status line that reports
-what is really happening (`hardware node active`, `enforcing`, `root required to enforce`,
-`armed, no writable node`), and the selection is remembered.
-
-How it works: vendor level nodes first (`charge_stop_level`, `charge_control_limit`,
-`battery_charge_limit`) — if one accepts the percentage it is read back and the charge stops in
-hardware. Otherwise a foreground service toggles a boolean node
-(`battery_charging_enabled` and friends) at the threshold and resumes 3% below it. Unplugging always
-re-enables charging.
-
-**Needs root** — those sysfs nodes are system-owned, so Shizuku alone cannot write them. Without
-root the card says so instead of pretending, and points at Moto Battery Care (which caps at 80% via
-Motorola's own service).
-
-The feature lives in `classes2.dex` and one added call in `PowerActivity`, so the translated
-original dex is never rewritten. Sources, mechanism and limits: `feature/README.md`.
+- From an earlier English build on this repo: normal update, no uninstall.
 
 ### What was translated
 
-841-entry ru → en map; for 3.2 specifically, 2 new strings, 74 resources, 146 layout attributes
-(160 occurrences) and 616 smali literals (668 occurrences). Format specifiers preserved exactly,
-concatenated message fragments reflowed, emoji kept as UTF-16 surrogate pairs.
+841-entry ru → en map. For 3.2 specifically: 2 new strings, plus 74 resources, 146 layout
+attributes (160 occurrences) and 616 smali literals (668 occurrences) carried over from the map.
+Format specifiers preserved exactly, concatenated message fragments reflowed, emoji kept as
+UTF-16 surrogate pairs.
+
+### Nothing else changed
+
+- Resource table structurally identical to upstream: 13 colours / 23 drawables / 167 ids /
+  11 layouts / 82 strings / 1 style — **no added resources, none removed**.
+- `AndroidManifest.xml` content identical to the original (line numbers normalised, diff empty).
+- Single `classes.dex`, exactly like the upstream APK — no extra dex, no injected code.
 
 ### Verification
 
-- 8 menu screens opened and scrolled on Android 14 x86_64: 523 UI text nodes, **0 Cyrillic**,
-  **0 crashes**.
-- Charge-limit card: taps produce 80% / 90% / Off states, selection persists, no crashes.
-- Resource table: nothing removed, +10 strings and +7 ids for the card; manifest: +1 service.
+- 8 menu screens opened and scrolled on Android 14 x86_64: 0 Cyrillic text nodes, 0 crashes.
 - Full evidence: [VERIFICATION.md](https://github.com/b0r1s-69/LenovoMotorolovichY70-EN/blob/main/VERIFICATION.md).
-
-**Known limitation:** real charge enforcement was not exercised — the emulator has no writable
-charging node and no root for the app. First real run has to happen on the phone.
 
 ### Upstream changes carried in 3.2
 
 Bypass charging became root-gated (`moto_extend_service` is signature-protected) and every
-sub-activity is `exported="false"` now, so screens are menu-only.
+sub-activity is `exported="false"` now, so the screens are reachable only through the menu cards.
 
 ### Credits
 
 Original app: **nik.reneyj** (4PDA). NFC routing fix: **stepchansky**.
-Unofficial fan localization plus a locally added feature; not affiliated with the original author,
-Motorola or Lenovo. Re-signed with a local key.
+Unofficial fan localization; not affiliated with the original author, Motorola or Lenovo.
+Only text literals were replaced. Re-signed with a local key, so it will not install over an
+author-signed build.

@@ -11,8 +11,8 @@ string translated to English.
 |---|---|
 | Package | `com.moto.resolutionmaster` |
 | Version | 3.2 (versionCode 32) |
-| Size | 830,493 B |
-| SHA-256 | `8bf07b581d2843056b1c0a0f4d99256ef25041041b3644b589930cf438f9e283` |
+| Size | 822,219 B |
+| SHA-256 | `57d95678544f8f8375488ef603e9175106a2c2dd27ee6bd807ad168b12576909` |
 | Min / target SDK | 26 / 34 |
 | Signing cert SHA-256 | `49f8ec5349ea1098be287ba9470c90bca702af7987b8017a474da1a8e35c5844` |
 
@@ -50,18 +50,16 @@ Details that matter for correctness:
 - **Emoji kept** — including astral-plane emoji, which must be emitted as UTF-16 surrogate pairs
   (`\ud83d\ude80`) in smali. A plain `\u1f680` is parsed as `\u1f68` + `"0"` and silently corrupts the glyph.
 
-## Battery charge limit — added here, not upstream
+## What this build is not
 
-Version 3.2 has no charge limit. This build adds one to the **Power and Bypass Charging** screen:
-presets Off / 80% / 85% / 90% / 95%, a status line that reports what is actually happening, and
-remembered state. It drives the charging circuit through vendor sysfs nodes, so it needs root.
+This is a **translation only**. No features were added, no code was changed beyond text
+literals, and the manifest and resource table are byte-for-byte equivalent to upstream in
+structure (13 colours / 23 drawables / 167 ids / 11 layouts / 82 strings / 1 style — identical to
+the original APK; manifest diff empty).
 
-It ships as a second dex (`classes2.dex`) and one added `invoke-static` in `PowerActivity`, so the
-translated original code is never rewritten. Details, mechanism and limitations:
-[feature/README.md](feature/README.md).
-
-Unplugged or unrooted, the card degrades honestly — it shows `root required to enforce` and the
-footer points at Moto Battery Care, which caps charging at 80% without root.
+A charge-limit experiment was prototyped on a rooted-path basis and is **not** part of any released
+APK here. Its sources are kept in `feature/` for reference only; nothing from it is compiled into
+`apk/`.
 
 ## Install
 
