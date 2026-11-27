@@ -10,9 +10,9 @@ string translated to English.
 | | |
 |---|---|
 | Package | `com.moto.resolutionmaster` |
-| Version | 3.1 (versionCode 31) |
-| Size | 814,027 B |
-| SHA-256 | `39114ecf8e7bbcc3e1d66b63e8e79169959f253e18e63b9f582e62a49d362e7b` |
+| Version | 3.2 (versionCode 32) |
+| Size | 830,493 B |
+| SHA-256 | `8bf07b581d2843056b1c0a0f4d99256ef25041041b3644b589930cf438f9e283` |
 | Min / target SDK | 26 / 34 |
 | Signing cert SHA-256 | `49f8ec5349ea1098be287ba9470c90bca702af7987b8017a474da1a8e35c5844` |
 
@@ -24,7 +24,7 @@ string translated to English.
 |---|---|---|
 | `res/values/strings.xml` | 74 | dialogs, toasts, permission text, preset tables |
 | `res/layout/*.xml` (`android:text` / `hint`) | 146 unique (160 occurrences) | screen titles, chips, warning blocks |
-| `smali` string literals | 614 unique (661 occurrences) | runtime toasts, `String.format` fragments, 111 package descriptions, Magisk `module.prop` + `service.sh` |
+| `smali` string literals | 616 unique (668 occurrences) | runtime toasts, `String.format` fragments, 111 package descriptions, Magisk `module.prop` + `service.sh` |
 
 Terminology was localized rather than transliterated:
 
@@ -50,16 +50,28 @@ Details that matter for correctness:
 - **Emoji kept** — including astral-plane emoji, which must be emitted as UTF-16 surrogate pairs
   (`\ud83d\ude80`) in smali. A plain `\u1f680` is parsed as `\u1f68` + `"0"` and silently corrupts the glyph.
 
+## Battery charge limit — added here, not upstream
+
+Version 3.2 has no charge limit. This build adds one to the **Power and Bypass Charging** screen:
+presets Off / 80% / 85% / 90% / 95%, a status line that reports what is actually happening, and
+remembered state. It drives the charging circuit through vendor sysfs nodes, so it needs root.
+
+It ships as a second dex (`classes2.dex`) and one added `invoke-static` in `PowerActivity`, so the
+translated original code is never rewritten. Details, mechanism and limitations:
+[feature/README.md](feature/README.md).
+
+Unplugged or unrooted, the card degrades honestly — it shows `root required to enforce` and the
+footer points at Moto Battery Care, which caps charging at 80% without root.
+
 ## Install
 
 ```bash
-adb install -r LenovoMotorolovichY70_v3.1_EN.apk
+adb install -r LenovoMotorolovichY70_v3.2_EN.apk
 ```
 
 - If the **original Russian build** is installed, uninstall it first — the signature differs:
   `adb uninstall com.moto.resolutionmaster`
-- This build **upgrades over the v3.0 English build** released earlier with the same key, so no
-  uninstall is needed there.
+- Every English build here shares one key, so 3.1 → 3.2 is a normal update with no uninstall.
 
 Full functionality needs the same privileges the original requires:
 
@@ -82,6 +94,14 @@ See [VERIFICATION.md](VERIFICATION.md) for the full evidence trail. Summary:
   through the same actions; both builds produced the same dialogs, countdown and rollback, with no
   exceptions on either side.
 
+## Upstream changes carried in 3.2
+
+- Bypass charging moved to a root-gated path: `moto_extend_service` is signature-protected, so the
+  app now says so instead of failing silently.
+- All sub-activities became `exported="false"` (they were exported in 3.1) — the screens are only
+  reachable through the menu cards now.
+- Two strings reworded; everything else was already covered by the existing map.
+
 ## Notes on v3.1
 
 The upstream v3.1 removed the Touch / Turbo module: `TouchActivity` is gone from the manifest
@@ -91,10 +111,11 @@ change, not something removed by this translation.
 ## Repository layout
 
 ```
-apk/                       signed, installable APK
-translation/en.json        ru → en map (839 entries) — drop-in for future versions
+apk/                       signed, installable APKs
+translation/en.json        ru → en map (841 entries) — drop-in for future versions
 tools/apply_translations.py  applies the map to an apktool-decoded tree
 tools/verify_screens.py    launches every activity, dumps UI text, flags Cyrillic / crashes
+feature/                   the added charge-limit card: Java sources, injection script, build
 ```
 
 To localize a future release:
@@ -107,7 +128,7 @@ zipalign -p -f 4 unsigned.apk aligned.apk
 apksigner sign --ks keystore.jks --out app_EN.apk aligned.apk
 ```
 
-Only strings missing from `translation/en.json` need new work — v3.1 needed 3.
+Only strings missing from `translation/en.json` need new work — v3.2 needed 2, v3.1 needed 3.
 
 ## Credits & disclaimer
 

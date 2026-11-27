@@ -1,6 +1,70 @@
-# Verification log — v3.1 English build
+# Verification log
 
-Everything below was executed against the signed artifact in `apk/`:
+Latest run: **v3.2**. The v3.1 log is kept at the bottom for comparison.
+
+## v3.2 (versionCode 32)
+
+Artifact:
+
+```
+sha256  8bf07b581d2843056b1c0a0f4d99256ef25041041b3644b589930cf438f9e283
+size    830,493 bytes
+dex     classes.dex (translated original) + classes2.dex (charge-limit feature)
+```
+
+### Screens
+
+v3.2 made every sub-activity `exported="false"`, so screens are reached through the menu cards
+instead of `am start`. 8 cards, all opened, scrolled three times each:
+
+| Card | Activity | Text nodes | Cyrillic |
+|---|---|---|---|
+| Display and resolution | MainActivity | 98 | 0 |
+| Eye protection | EyeCareActivity | 36 | 0 |
+| Smart Always On Display | AodActivity | 24 | 0 |
+| Power and Bypass Charging | PowerActivity | 76 | 0 |
+| Audio and Bluetooth | AudioActivity | 44 | 0 |
+| Network speed | NetworkSpeedActivity | 56 | 0 |
+| App cleanup | DebloatActivity | 117 | 0 |
+| NFC fix | NfcFixActivity | 40 | 0 |
+| **total** | | **523** | **0** |
+
+`CRASH/EXCEPTION LINES: 0`
+
+### Charge-limit feature
+
+| Check | Observed |
+|---|---|
+| card renders | Off / 80% / 85% / 90% / 95%, Root badge, footer note |
+| tap 80% | `Limit: 80% • root required to enforce • battery 100%` |
+| tap 90% | `Limit: 90% • root required to enforce • battery 100%` |
+| tap Off | `Limit: Off • charging to 100%` |
+| persistence | selection survives re-render (read back from `SharedPreferences`) |
+| crashes | none |
+| shell semantics | `test -w`, `echo 0 > node`, `cat` read-back validated on a local POSIX shell |
+
+Emulator battery node inventory (`/sys/class/power_supply/battery/`): `capacity`, `status`, `temp`,
+`voltage_now`, … — **no** `*charging_enabled*` and no `charge_*limit*` node, and an app on a stock
+emulator image cannot obtain root. So enforcement itself is unverified on hardware; everything up
+to the sysfs write is verified.
+
+### Structural parity
+
+```
+RU resources: color 13, drawable 23, id 167, layout 11, string 82, style 1
+EN resources: color 13, drawable 23, id 174, layout 11, string 92, style 1
+  added ids:     btn_cl_80, btn_cl_85, btn_cl_90, btn_cl_95, btn_cl_off, card_charge_limit, tv_cl_status
+  added strings: cl_80, cl_85, cl_90, cl_95, cl_badge, cl_desc, cl_footer, cl_off, cl_status_off, cl_title
+  removed:       nothing
+Cyrillic in EN resource table: 0
+Manifest diff vs original: exactly one added service (.ChargeLimitService, specialUse)
+```
+
+---
+
+# v3.1 (versionCode 31)
+
+Everything below was executed against the v3.1 artifact:
 
 ```
 sha256  39114ecf8e7bbcc3e1d66b63e8e79169959f253e18e63b9f582e62a49d362e7b

@@ -133,7 +133,7 @@ def main():
 
     # 3) smali
     lit = re.compile(r'"((?:[^"\\]|\\.)*)"')
-    for f in sorted(glob.glob(os.path.join(dec, 'smali**', '*.smali'), recursive=True)):
+    for f in sorted(glob.glob(os.path.join(dec, 'smali', '**', '*.smali'), recursive=True)):
         s = open(f, encoding='utf-8', errors='replace').read()
         if not CYR.search(s) and '\\u04' not in s:
             continue
