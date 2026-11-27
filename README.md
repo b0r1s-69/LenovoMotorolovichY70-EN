@@ -1,4 +1,4 @@
-# LenovoMotorolovichY70 — English translation (v3.1)
+# LenovoMotorolovichY70 — English translation (v3.2)
 
 Unofficial full English localization of **LenovoMotorolovichY70** (`com.moto.resolutionmaster`),
 a display / power / debloat toolkit for the **Lenovo Legion Y70** and **Moto Edge 70 Max**.
@@ -18,7 +18,7 @@ string translated to English.
 
 ## What was translated
 
-839 unique Russian strings across the three places text actually lives in an Android app:
+836 unique Russian strings in 3.2, all covered by the 841-entry map, across the three places text actually lives in an Android app:
 
 | Layer | Strings | Examples |
 |---|---|---|
@@ -43,7 +43,7 @@ Terminology was localized rather than transliterated:
 Details that matter for correctness:
 
 - **Format specifiers preserved** — `%1$s`, `%2$d`, `%d`, `%.0f Гц` → `%.0f Hz`, `%d%%`. A parity
-  check over all 839 pairs confirmed no specifier was added, dropped or reordered.
+  check over all 841 map entries confirmed no specifier was added, dropped or reordered.
 - **Runtime concatenation reflowed** — the app builds messages by gluing fragments
   (`"AOD turns off after "` + `" sec"`, `"Enabled "` + n + `" of "` + m + `" preset packages."`).
   Fragments were translated so the joined result is grammatical English, not translated in isolation.
@@ -69,7 +69,8 @@ adb install -r LenovoMotorolovichY70_v3.2_EN.apk
 
 - If the **original Russian build** is installed, uninstall it first — the signature differs:
   `adb uninstall com.moto.resolutionmaster`
-- Every English build here shares one key, so 3.1 → 3.2 is a normal update with no uninstall.
+- Every English build here shares one key, so updating from the 3.1 build needs no uninstall;
+  3.1 itself stays available from its release tag.
 
 Full functionality needs the same privileges the original requires:
 
@@ -83,12 +84,12 @@ Resolution and refresh-rate switching on Android 14+ additionally need Shizuku o
 
 See [VERIFICATION.md](VERIFICATION.md) for the full evidence trail. Summary:
 
-- Installed and launched on an Android 14 (x86_64) emulator; all 9 activities opened and scrolled.
-- 635 UI text nodes captured via `uiautomator`: **0 Cyrillic characters, 0 crashes/exceptions**.
+- Installed and launched on an Android 14 (x86_64) emulator; all 8 menu screens opened and scrolled.
+- 523 UI text nodes captured via `uiautomator`: **0 Cyrillic characters, 0 crashes/exceptions**.
 - Resource table identical to the untranslated build in structure
   (13 colors / 23 drawables / 167 ids / 11 layouts / 82 strings / 1 style).
 - `AndroidManifest.xml` content identical to the original (line numbers normalized).
-- Behaviour parity control: the untranslated v3.1 was installed on the same emulator and driven
+- Behaviour parity control: the untranslated v3.2 was installed on the same emulator and driven
   through the same actions; both builds produced the same dialogs, countdown and rollback, with no
   exceptions on either side.
 
@@ -100,20 +101,24 @@ See [VERIFICATION.md](VERIFICATION.md) for the full evidence trail. Summary:
   reachable through the menu cards now.
 - Two strings reworded; everything else was already covered by the existing map.
 
-## Notes on v3.1
+## History
 
-The upstream v3.1 removed the Touch / Turbo module: `TouchActivity` is gone from the manifest
-(10 activities → 9) and there are no touch-related strings left in the APK. That is an upstream
-change, not something removed by this translation.
+- **3.2** — bypass charging became root-gated; every sub-activity became `exported="false"`;
+  all eight screens are now reachable only through the menu cards.
+- **3.1** — upstream removed the Touch / Turbo module: `TouchActivity` is gone from the manifest
+  (10 activities → 9) and no touch-related strings remain. Not something this translation removed.
+- **3.0** — first localization; not published here.
+
+The 3.1 English build is still downloadable from its own release tag.
 
 ## Repository layout
 
 ```
-apk/                       signed, installable APKs
+apk/                       the current signed, installable APK (3.2)
 translation/en.json        ru → en map (841 entries) — drop-in for future versions
 tools/apply_translations.py  applies the map to an apktool-decoded tree
 tools/verify_screens.py    launches every activity, dumps UI text, flags Cyrillic / crashes
-feature/                   the added charge-limit card: Java sources, injection script, build
+feature/                   experimental charge-limit card — sources only, NOT shipped in apk/
 ```
 
 To localize a future release:
